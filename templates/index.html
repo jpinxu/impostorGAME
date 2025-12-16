@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Impostor Game</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div id="app">
+        <!-- Pantalla de selección de temática -->
+        <div id="theme-screen" class="screen active">
+            <div class="container">
+                <div class="header">
+                    <h1 class="title">IMPOSTOR</h1>
+                    <p class="subtitle">GAME</p>
+                    <div class="divider"></div>
+                </div>
+                
+                <!-- Mazo de cartas inicial -->
+                <div id="card-deck-animation" class="card-deck-wrapper">
+                    <div class="card-deck">
+                        <div class="deck-card deck-shadow"></div>
+                        <div class="deck-card deck-shadow"></div>
+                        <div class="deck-card deck-shadow"></div>
+                        <div class="deck-card deck-main"></div>
+                    </div>
+                </div>
+                
+                <p class="instruction" id="theme-instruction" style="opacity: 0;">Selecciona la temática del juego</p>
+                
+                <div class="theme-buttons" style="opacity: 0; pointer-events: none; display: flex; gap: 15px; justify-content: center; margin: 20px auto;">
+                    <button id="random-theme-btn" class="btn btn-large btn-special">TEMÁTICA ALEATORIA</button>
+                    <button id="create-theme-btn" class="btn btn-large btn-special">CREAR TEMÁTICA</button>
+                </div>
+                
+                <div id="custom-themes-dropdown" style="opacity: 0; pointer-events: none; margin: 20px auto; max-width: 500px;">
+                    <div class="dropdown-header" id="dropdown-header">
+                        <span>TEMÁTICAS CREADAS</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </div>
+                    <div class="dropdown-content" id="dropdown-content">
+                        <p style="padding: 20px; color: #707080; text-align: center; font-size: 14px;">No hay ninguna temática creada</p>
+                    </div>
+                </div>
+                
+                <div class="theme-grid" id="theme-grid" style="opacity: 0;">
+                    <!-- Temáticas se cargarán aquí -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pantalla de creación de temática -->
+        <div id="create-theme-screen" class="screen">
+            <div class="container">
+                <div class="header">
+                    <h1 class="title">CREAR TEMÁTICA</h1>
+                    <p class="subtitle">PERSONALIZADA</p>
+                    <div class="divider"></div>
+                </div>
+                
+                <div class="create-theme-card">
+                    <p class="create-instruction">Define el nombre y las palabras de tu temática</p>
+                    
+                    <div class="create-theme-form">
+                        <div class="form-group">
+                            <label for="theme-name-input">Nombre de la Temática</label>
+                            <input type="text" id="theme-name-input" class="theme-input" placeholder="Ejemplo: Países, Marcas, etc." maxlength="30">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="theme-words-input">Palabras (mínimo 10)</label>
+                            <div class="word-input-container">
+                                <input type="text" id="theme-words-input" class="theme-input" placeholder="Escribe una palabra y presiona Enter..." maxlength="30">
+                                <button id="add-word-btn" class="btn-add-word" type="button">+</button>
+                            </div>
+                            <div class="word-count-container">
+                                <span class="word-count-label">Total de palabras:</span>
+                                <span class="word-count" id="word-count">0</span>
+                            </div>
+                            <div id="words-list" class="words-list">
+                                <!-- Palabras agregadas aparecerán aquí -->
+                            </div>
+                        </div>
+                        
+                        <div class="form-buttons">
+                            <button id="save-theme-btn" class="btn btn-large btn-primary">GUARDAR TEMÁTICA</button>
+                            <button id="cancel-theme-btn" class="btn btn-text">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pantalla de jugadores -->
+        <div id="setup-screen" class="screen">
+            <div class="container">
+                <div class="header">
+                    <h1 class="title">IMPOSTOR</h1>
+                    <p class="subtitle">GAME</p>
+                    <div class="divider"></div>
+                </div>
+                
+                <p class="instruction">Ingresa los nombres de los jugadores (mínimo 3)</p>
+                <p id="selected-theme-display" class="theme-display"></p>
+                
+                <!-- Selector de impostores -->
+                <div class="impostor-selector-container">
+                    <label class="impostor-selector-label">
+                        <svg class="impostor-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        <span>Cantidad de impostores:</span>
+                    </label>
+                    <div class="impostor-controls">
+                        <button id="decrease-impostor-btn" class="impostor-btn">−</button>
+                        <span id="impostor-count-display" class="impostor-count">1</span>
+                        <button id="increase-impostor-btn" class="impostor-btn">+</button>
+                    </div>
+                </div>
+                
+                <!-- Toggle de cámara -->
+                <div class="camera-toggle-container">
+                    <label class="camera-toggle">
+                        <input type="checkbox" id="camera-toggle-input">
+                        <span class="toggle-slider">
+                            <svg class="camera-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                <circle cx="12" cy="13" r="4"></circle>
+                            </svg>
+                        </span>
+                    </label>
+                    <span class="toggle-label">Capturar foto de jugadores</span>
+                </div>
+                
+                <!-- Modal de confirmación -->
+                <div id="confirm-modal" class="confirm-modal">
+                    <div class="confirm-modal-content">
+                        <div class="confirm-header">
+                            <div class="confirm-icon">⚠</div>
+                        </div>
+                        <div class="confirm-body">
+                            <h3 id="confirm-title" class="confirm-title"></h3>
+                            <p id="confirm-message" class="confirm-message"></p>
+                        </div>
+                        <div class="confirm-footer">
+                            <button class="btn btn-danger" id="confirm-yes-btn">ACEPTAR</button>
+                            <button class="btn btn-text" id="confirm-no-btn">CANCELAR</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Modal de cámara -->
+                <div id="camera-modal" class="camera-modal">
+                    <div class="camera-modal-content">
+                        <div class="camera-header">
+                            <h3 id="camera-player-name">Foto de Jugador</h3>
+                            <button class="camera-close" id="camera-close-btn">&times;</button>
+                        </div>
+                        <div class="camera-body">
+                            <video id="camera-video" autoplay playsinline></video>
+                            <canvas id="camera-canvas" style="display: none;"></canvas>
+                            <div id="camera-preview" class="camera-preview" style="display: none;">
+                                <img id="preview-image" src="" alt="Preview">
+                            </div>
+                        </div>
+                        <div class="camera-footer">
+                            <button class="btn btn-primary" id="capture-btn">CAPTURAR</button>
+                            <button class="btn btn-primary" id="retake-btn" style="display: none;">TOMAR OTRA</button>
+                            <button class="btn btn-primary" id="confirm-photo-btn" style="display: none;">CONFIRMAR</button>
+                            <button class="btn btn-danger" id="skip-photo-btn">OMITIR</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="deck-container">
+                    <div id="player-deck" class="player-deck"></div>
+                </div>
+                
+                <div class="input-container">
+                    <input type="text" id="player-name" placeholder="Nombre del jugador" autocomplete="off">
+                    <button id="add-player-btn" class="btn btn-primary">AGREGAR</button>
+                    <button id="delete-player-btn" class="btn btn-danger">ELIMINAR</button>
+                </div>
+                
+                <button id="start-game-btn" class="btn btn-large btn-primary">COMENZAR JUEGO</button>
+                <button id="back-to-themes-btn" class="btn btn-text">Cambiar Temática</button>
+            </div>
+        </div>
+        
+        <!-- Pantalla de revelación -->
+        <div id="reveal-screen" class="screen">
+            <div class="container">
+                <p class="turn-label">TURNO DE</p>
+                <div class="player-info-reveal">
+                    <img id="current-player-photo" class="player-photo-reveal" style="display: none;" src="" alt="">
+                    <h2 id="current-player-name" class="player-name"></h2>
+                </div>
+                
+                <p class="instruction" id="reveal-instruction">Toca la carta para revelar tu rol</p>
+                
+                <!-- Carta en pantalla de revelación -->
+                <div class="card-wrapper">
+                    <div class="card clickable" id="reveal-card">
+                        <div class="card-inner">
+                            <div class="card-back">
+                                <div class="card-back-pattern">
+                                    <div class="card-logo">?</div>
+                                </div>
+                            </div>
+                            <div class="card-front" id="reveal-card-front">
+                                <!-- Contenido dinámico -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="progress-info">
+                    <p id="progress-count" class="progress-number">0 / 0</p>
+                    <p class="progress-label">REVELADOS</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Pantalla de rol revelado -->
+        <div id="role-screen" class="screen">
+            <div class="container">
+                <div class="player-info-role">
+                    <img id="role-player-photo" class="player-photo-role" style="display: none;" src="" alt="">
+                    <p id="role-player-name" class="role-player-label"></p>
+                </div>
+                
+                <div class="card-wrapper">
+                    <div class="card" id="role-card">
+                        <div class="card-inner">
+                            <div class="card-back">
+                                <div class="card-back-pattern">
+                                    <div class="card-logo">?</div>
+                                </div>
+                            </div>
+                            <div class="card-front" id="card-front">
+                                <!-- Contenido dinámico -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="warning">No muestres tu rol a los demás</p>
+                <button id="next-player-btn" class="btn btn-large btn-primary">SIGUIENTE</button>
+            </div>
+        </div>
+        
+        <!-- Pantalla final -->
+        <div id="final-screen" class="screen">
+            <div class="container">
+                <!-- Círculos decorativos animados -->
+                <div class="discussion-circles">
+                    <div class="circle-orbit circle-1"></div>
+                    <div class="circle-orbit circle-2"></div>
+                    <div class="circle-orbit circle-3"></div>
+                    <div class="circle-orbit circle-4"></div>
+                </div>
+                
+                <!-- Icono central -->
+                <div class="final-icon-container">
+                    <div class="final-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                    </div>
+                    <div class="pulse-ring"></div>
+                    <div class="pulse-ring-delayed"></div>
+                </div>
+                
+                <h2 class="final-title">TODOS LOS ROLES<br>HAN SIDO REVELADOS</h2>
+                <div class="divider-large"></div>
+                
+                <!-- Pasos de discusión -->
+                <div class="discussion-steps">
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <p class="step-text">Discute con tu grupo</p>
+                    </div>
+                    <div class="step-arrow">→</div>
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <p class="step-text">Vota al sospechoso</p>
+                    </div>
+                    <div class="step-arrow">→</div>
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <p class="step-text">Revela el impostor</p>
+                    </div>
+                </div>
+                
+                <p class="final-instruction">Cuando estén listos para descubrir quién es el impostor<br>presiona el botón de abajo</p>
+                
+                <!-- Timer visual decorativo -->
+                <div class="timer-decoration">
+                    <div class="timer-dot"></div>
+                    <div class="timer-dot"></div>
+                    <div class="timer-dot"></div>
+                </div>
+                
+                <button id="reveal-impostor-btn" class="btn btn-large btn-danger">REVELAR IMPOSTOR</button>
+                <button id="new-game-btn" class="btn btn-text">Nuevo Juego</button>
+            </div>
+        </div>
+        
+        <!-- Pantalla de impostor revelado -->
+        <div id="impostor-screen" class="screen">
+            <div class="container">
+                <p class="impostor-label">EL IMPOSTOR ERA</p>
+                
+                <div class="card-wrapper">
+                    <div class="card" id="impostor-card">
+                        <div class="card-inner">
+                            <div class="card-back">
+                                <div class="card-back-pattern">
+                                    <div class="card-logo">?</div>
+                                </div>
+                            </div>
+                            <div class="card-front impostor-front">
+                                <h2 class="role-title impostor">IMPOSTOR</h2>
+                                <div class="divider-small"></div>
+                                <img id="impostor-photo" class="impostor-photo" style="display: none;" src="" alt="">
+                                <h1 id="impostor-name" class="impostor-name"></h1>
+                                <div class="divider-small"></div>
+                                <p class="role-instruction">¡Fue descubierto!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button id="play-again-btn" class="btn btn-large btn-primary">JUGAR DE NUEVO</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
