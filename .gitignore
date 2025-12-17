@@ -70,3 +70,12 @@ temp/
 # Scripts Temporales
 # ====================
 create_icon.py
+
+# ====================
+# Android/Cordova
+# ====================
+mobile-app/platforms/
+mobile-app/plugins/
+mobile-app/node_modules/
+platform-tools/
+*.apk
