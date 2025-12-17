@@ -1,18 +1,27 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, session
 import random
+import os
 
 app = Flask(__name__)
+app.secret_key = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production-' + str(random.randint(100000, 999999)))
 
-# Estado del juego
-game_state = {
-    'players': [],
-    'impostors': [],
-    'secret_word': None,
-    'current_player_index': 0,
-    'revealed_players': set(),
-    'theme': 'general',
-    'impostor_count': 1
-}
+# Función para obtener el estado del juego de la sesión actual
+def get_game_state():
+    if 'game_state' not in session:
+        session['game_state'] = {
+            'players': [],
+            'impostors': [],
+            'secret_word': None,
+            'current_player_index': 0,
+            'revealed_players': [],
+            'theme': 'general',
+            'impostor_count': 1
+        }
+    return session['game_state']
+
+def save_game_state(state):
+    session['game_state'] = state
+    session.modified = True
 
 # Listas de palabras por temática
 word_themes = {
@@ -108,10 +117,12 @@ def index():
 
 @app.route('/api/players', methods=['GET'])
 def get_players():
+    game_state = get_game_state()
     return jsonify({'players': game_state['players']})
 
 @app.route('/api/players', methods=['POST'])
 def add_player():
+    game_state = get_game_state()
     data = request.json
     name = data.get('name', '').strip()
     
@@ -122,12 +133,15 @@ def add_player():
         return jsonify({'error': 'Este nombre ya existe'}), 400
     
     game_state['players'].append(name)
+    save_game_state(game_state)
     return jsonify({'success': True, 'players': game_state['players']})
 
 @app.route('/api/players/<name>', methods=['DELETE'])
 def delete_player(name):
+    game_state = get_game_state()
     if name in game_state['players']:
         game_state['players'].remove(name)
+        save_game_state(game_state)
         return jsonify({'success': True, 'players': game_state['players']})
     return jsonify({'error': 'Jugador no encontrado'}), 404
 
@@ -151,6 +165,7 @@ def get_themes():
 
 @app.route('/api/game/start', methods=['POST'])
 def start_game():
+    game_state = get_game_state()
     if len(game_state['players']) < 3:
         return jsonify({'error': 'Se necesitan al menos 3 jugadores'}), 400
     
@@ -181,7 +196,9 @@ def start_game():
         game_state['secret_word'] = random.choice(word_themes['general'])
     
     game_state['current_player_index'] = 0
-    game_state['revealed_players'] = set()
+    game_state['revealed_players'] = []
+    
+    save_game_state(game_state)
     
     return jsonify({
         'success': True,
@@ -192,6 +209,7 @@ def start_game():
 
 @app.route('/api/game/reveal', methods=['POST'])
 def reveal_role():
+    game_state = get_game_state()
     data = request.json
     player_index = data.get('player_index', 0)
     
@@ -201,7 +219,10 @@ def reveal_role():
     player_name = game_state['players'][player_index]
     is_impostor = player_name in game_state['impostors']
     
-    game_state['revealed_players'].add(player_index)
+    if player_index not in game_state['revealed_players']:
+        game_state['revealed_players'].append(player_index)
+    
+    save_game_state(game_state)
     
     return jsonify({
         'player_name': player_name,
@@ -213,6 +234,7 @@ def reveal_role():
 
 @app.route('/api/game/impostor', methods=['GET'])
 def get_impostor():
+    game_state = get_game_state()
     if not game_state.get('impostors'):
         return jsonify({
             'error': 'No hay juego activo',
@@ -227,11 +249,14 @@ def get_impostor():
 
 @app.route('/api/game/reset', methods=['POST'])
 def reset_game():
+    game_state = get_game_state()
     game_state['impostors'] = []
     game_state['secret_word'] = None
     game_state['current_player_index'] = 0
-    game_state['revealed_players'] = set()
+    game_state['revealed_players'] = []
     game_state['impostor_count'] = 1
+    
+    save_game_state(game_state)
     
     return jsonify({'success': True, 'players': game_state['players']})
 
