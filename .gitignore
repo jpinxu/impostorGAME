@@ -65,3 +65,8 @@ temp/
 # Archivos Obsoletos
 # ====================
 # impostor_game.py movido a docs/impostor_game_legacy.py
+
+# ====================
+# Scripts Temporales
+# ====================
+create_icon.py

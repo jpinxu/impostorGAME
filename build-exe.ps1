@@ -44,6 +44,7 @@ Write-Host ""
 
 pyinstaller --onefile --windowed `
     --name "ImpostorGameWeb" `
+    --icon "icon.ico" `
     --add-data "templates;templates" `
     --add-data "static;static" `
     launcher.py
