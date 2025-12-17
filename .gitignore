@@ -1,9 +1,6 @@
-# Entorno virtual
-.venv/
-venv/
-env/
-
+# ====================
 # Python
+# ====================
 __pycache__/
 *.pyc
 *.pyo
@@ -12,31 +9,59 @@ __pycache__/
 *.so
 *.egg
 *.egg-info/
-dist/
+
+# ====================
+# Entornos Virtuales
+# ====================
+.venv/
+venv/
+env/
+ENV/
+
+# ====================
+# PyInstaller
+# ====================
 build/
+dist/
+*.spec
 
-# Variables de entorno (por si agregas en el futuro)
-.env
-.env.local
-.env.*.local
-
+# ====================
 # IDEs
+# ====================
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# Sistema operativo
+# ====================
+# Sistema Operativo
+# ====================
 .DS_Store
 Thumbs.db
 *.log
 
-# Base de datos (por si agregas en el futuro)
+# ====================
+# Variables de Entorno
+# ====================
+.env
+.env.local
+.env.*.local
+
+# ====================
+# Base de Datos (futuro)
+# ====================
 *.db
 *.sqlite
 *.sqlite3
 
-# Archivos temporales
+# ====================
+# Temporales
+# ====================
 *.tmp
 temp/
+
+# ====================
+# Archivos Obsoletos
+# ====================
+# impostor_game.py movido a docs/impostor_game_legacy.py
