@@ -1,5 +1,5 @@
 # Script para construir APK de Android desde la app web
-# Requiere: Node.js, Cordova, Java JDK, Android SDK (o Gradle)
+# Requiere: Node.js, Cordova, Java JDK, Android SDK
 
 Write-Host "=== Impostor Game - Build APK Android ===" -ForegroundColor Cyan
 Write-Host ""
@@ -23,7 +23,7 @@ try {
     $javaVersion = java -version 2>&1 | Select-Object -First 1
     Write-Host "[OK] Java JDK instalado" -ForegroundColor Green
 } catch {
-    Write-Host "[ERROR] Java JDK no encontrado. Instala desde: https://www.oracle.com/java/technologies/downloads/" -ForegroundColor Red
+    Write-Host "[ERROR] Java JDK no encontrado." -ForegroundColor Red
     exit 1
 }
 
@@ -122,9 +122,9 @@ if (Test-Path "mobile-app\platforms\android\app\build\outputs\apk\debug\app-debu
     Write-Host "APK creado en: dist-android\ImpostorGame.apk" -ForegroundColor Cyan
     Write-Host "Tamaño: $([math]::Round($apkSize, 2)) MB" -ForegroundColor Cyan
     Write-Host ""
-    Write-Host "INSTALACIÓN:" -ForegroundColor Yellow
+    Write-Host "INSTALACION:" -ForegroundColor Yellow
     Write-Host "1. Transfiere ImpostorGame.apk a tu dispositivo Android" -ForegroundColor White
-    Write-Host "2. Habilita 'Instalar apps desconocidas' en configuración" -ForegroundColor White
+    Write-Host "2. Habilita 'Instalar apps desconocidas' en configuracion" -ForegroundColor White
     Write-Host "3. Abre el archivo APK y instala" -ForegroundColor White
     Write-Host ""
     Write-Host "O usa ADB: adb install dist-android\ImpostorGame.apk" -ForegroundColor White
@@ -134,6 +134,6 @@ if (Test-Path "mobile-app\platforms\android\app\build\outputs\apk\debug\app-debu
     Write-Host "Posibles soluciones:" -ForegroundColor Yellow
     Write-Host "1. Instala Android SDK o Android Studio" -ForegroundColor White
     Write-Host "2. Configura ANDROID_HOME en variables de entorno" -ForegroundColor White
-    Write-Host "3. Ejecuta comando: cordova requirements android" -ForegroundColor White
+    Write-Host "3. Ejecuta: cordova requirements android" -ForegroundColor White
     exit 1
 }

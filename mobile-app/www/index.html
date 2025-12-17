@@ -2,10 +2,11 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Impostor Game</title>
     <link rel="stylesheet" href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<script type="text/javascript" src="cordova.js"></script>
 </head>
 <body>
     <div id="app">
@@ -123,20 +124,6 @@
                     </div>
                 </div>
                 
-                <!-- Toggle de cámara -->
-                <div class="camera-toggle-container">
-                    <label class="camera-toggle">
-                        <input type="checkbox" id="camera-toggle-input">
-                        <span class="toggle-slider">
-                            <svg class="camera-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-                                <circle cx="12" cy="13" r="4"></circle>
-                            </svg>
-                        </span>
-                    </label>
-                    <span class="toggle-label">Capturar foto de jugadores</span>
-                </div>
-                
                 <!-- Modal de confirmación -->
                 <div id="confirm-modal" class="confirm-modal">
                     <div class="confirm-modal-content">
@@ -154,29 +141,7 @@
                     </div>
                 </div>
                 
-                <!-- Modal de cámara -->
-                <div id="camera-modal" class="camera-modal">
-                    <div class="camera-modal-content">
-                        <div class="camera-header">
-                            <h3 id="camera-player-name">Foto de Jugador</h3>
-                            <button class="camera-close" id="camera-close-btn">&times;</button>
-                        </div>
-                        <div class="camera-body">
-                            <video id="camera-video" autoplay playsinline></video>
-                            <canvas id="camera-canvas" style="display: none;"></canvas>
-                            <div id="camera-preview" class="camera-preview" style="display: none;">
-                                <img id="preview-image" src="" alt="Preview">
-                            </div>
-                        </div>
-                        <div class="camera-footer">
-                            <button class="btn btn-primary" id="capture-btn">CAPTURAR</button>
-                            <button class="btn btn-primary" id="retake-btn" style="display: none;">TOMAR OTRA</button>
-                            <button class="btn btn-primary" id="confirm-photo-btn" style="display: none;">CONFIRMAR</button>
-                            <button class="btn btn-danger" id="skip-photo-btn">OMITIR</button>
-                        </div>
-                    </div>
-                </div>
-                
+
                 <div class="deck-container">
                     <div id="player-deck" class="player-deck"></div>
                 </div>
@@ -300,7 +265,7 @@
                     </div>
                 </div>
                 
-                <p class="final-instruction">Cuando estén listos para descubrir quién es el impostor<br>presiona el botón de abajo</p>
+                <p class="final-instruction">¡El juego ha terminado!<br>Discutan entre ustedes para descubrir al impostor</p>
                 
                 <!-- Timer visual decorativo -->
                 <div class="timer-decoration">
@@ -309,42 +274,14 @@
                     <div class="timer-dot"></div>
                 </div>
                 
-                <button id="reveal-impostor-btn" class="btn btn-large btn-danger">REVELAR IMPOSTOR</button>
-                <button id="new-game-btn" class="btn btn-text">Nuevo Juego</button>
+                <button id="new-game-btn" class="btn btn-large btn-primary">NUEVO JUEGO</button>
             </div>
         </div>
         
-        <!-- Pantalla de impostor revelado -->
-        <div id="impostor-screen" class="screen">
-            <div class="container">
-                <p class="impostor-label">EL IMPOSTOR ERA</p>
-                
-                <div class="card-wrapper">
-                    <div class="card" id="impostor-card">
-                        <div class="card-inner">
-                            <div class="card-back">
-                                <div class="card-back-pattern">
-                                    <div class="card-logo">?</div>
-                                </div>
-                            </div>
-                            <div class="card-front impostor-front">
-                                <h2 class="role-title impostor">IMPOSTOR</h2>
-                                <div class="divider-small"></div>
-                                <img id="impostor-photo" class="impostor-photo" style="display: none;" src="" alt="">
-                                <h1 id="impostor-name" class="impostor-name"></h1>
-                                <div class="divider-small"></div>
-                                <p class="role-instruction">¡Fue descubierto!</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <button id="play-again-btn" class="btn btn-large btn-primary">JUGAR DE NUEVO</button>
-            </div>
-        </div>
+
     </div>
     
-    <script type="text/javascript" src="cordova.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
+
