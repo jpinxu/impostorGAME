@@ -10,7 +10,8 @@ let gameState = {
     impostorCount: 1,
     impostors: [],
     secretWord: null,
-    revealedPlayers: []
+    revealedPlayers: [],
+    firstPlayer: null
 };
 
 // Temáticas predefinidas
@@ -25,7 +26,7 @@ const THEMES = {
     "Instrumentos": ["Guitarra", "Piano", "Batería", "Violín", "Flauta", "Saxofón", "Trompeta", "Trombón", "Clarinete", "Oboe", "Arpa", "Bajo", "Ukelele", "Banjo", "Acordeón", "Armónica", "Xilófono", "Maracas", "Tambor", "Pandereta"],
     "Ropa": ["Camisa", "Pantalón", "Vestido", "Falda", "Jersey", "Chaqueta", "Abrigo", "Zapatos", "Botas", "Zapatillas", "Calcetines", "Bufanda", "Gorro", "Guantes", "Cinturón", "Corbata", "Pañuelo", "Gafas", "Reloj", "Bolso"],
     "Tecnología": ["Ordenador", "Móvil", "Tablet", "Televisión", "Radio", "Cámara", "Impresora", "Escáner", "Ratón", "Teclado", "Monitor", "Altavoz", "Auriculares", "Micrófono", "Router", "USB", "Disco Duro", "Procesador", "Memoria RAM", "Placa Base"],
-    "League of Legends": ["Yasuo", "Zed", "Ahri", "Lux", "Jinx", "Ezreal", "Lee Sin", "Thresh", "Vayne", "Riven", "Katarina", "Darius", "Garen", "Teemo", "Master Yi", "Blitzcrank", "Jhin", "Draven", "Lucian", "Caitlyn"],
+    "League of Legends": ["Aatrox", "Ahri", "Akali", "Akshan", "Alistar", "Amumu", "Anivia", "Annie", "Aphelios", "Ashe", "Aurelion Sol", "Azir", "Bard", "Bel'Veth", "Blitzcrank", "Brand", "Braum", "Caitlyn", "Camille", "Cassiopeia", "Cho'Gath", "Corki", "Darius", "Diana", "Dr. Mundo", "Draven", "Ekko", "Elise", "Evelynn", "Ezreal", "Fiddlesticks", "Fiora", "Fizz", "Galio", "Gangplank", "Garen", "Gnar", "Gragas", "Graves", "Gwen", "Hecarim", "Heimerdinger", "Illaoi", "Irelia", "Ivern", "Janna", "Jarvan IV", "Jax", "Jayce", "Jhin", "Jinx", "K'Sante", "Kai'Sa", "Kalista", "Karma", "Karthus", "Kassadin", "Katarina", "Kayle", "Kayn", "Kennen", "Kha'Zix", "Kindred", "Kled", "Kog'Maw", "LeBlanc", "Lee Sin", "Leona", "Lillia", "Lissandra", "Lucian", "Lulu", "Lux", "Malphite", "Malzahar", "Maokai", "Master Yi", "Milio", "Miss Fortune", "Mordekaiser", "Morgana", "Naafiri", "Nami", "Nasus", "Nautilus", "Neeko", "Nidalee", "Nilah", "Nocturne", "Nunu", "Olaf", "Orianna", "Ornn", "Pantheon", "Poppy", "Pyke", "Qiyana", "Quinn", "Rakan", "Rammus", "Rek'Sai", "Rell", "Renata", "Renekton", "Rengar", "Riven", "Rumble", "Ryze", "Samira", "Sejuani", "Senna", "Seraphine", "Sett", "Shaco", "Shen", "Shyvana", "Singed", "Sion", "Sivir", "Skarner", "Sona", "Soraka", "Swain", "Sylas", "Syndra", "Tahm Kench", "Taliyah", "Talon", "Taric", "Teemo", "Thresh", "Tristana", "Trundle", "Tryndamere", "Twisted Fate", "Twitch", "Udyr", "Urgot", "Varus", "Vayne", "Veigar", "Vel'Koz", "Vex", "Vi", "Viego", "Viktor", "Vladimir", "Volibear", "Warwick", "Wukong", "Xayah", "Xerath", "Xin Zhao", "Yasuo", "Yone", "Yorick", "Yuumi", "Zac", "Zed", "Zeri", "Ziggs", "Zilean", "Zoe", "Zyra"],
     "Clash Royale": ["Caballero", "Arqueras", "Gigante", "PEKKA", "Globo", "Minero", "Mago", "Dragón Infernal", "Bruja", "Golem", "Sabueso de Lava", "Montapuercos", "Príncipe", "Príncipe Oscuro", "Megacaballero", "Bandida", "Leñador", "Verdugo", "Bárbaro de Elite", "Pandilla de Duendes"]
 };
 
@@ -328,8 +329,38 @@ function startGame() {
     gameState.currentPlayerIndex = 0;
     gameState.revealedPlayers = [];
     
+    // Seleccionar quién empieza con probabilidad reducida para impostores
+    selectFirstPlayer();
+    
     switchScreen(revealScreen);
     updateRevealScreen();
+}
+
+function selectFirstPlayer() {
+    // Crear array de probabilidades: impostores tienen 0.5, jugadores normales tienen 1.0
+    const probabilities = [];
+    
+    for (let i = 0; i < gameState.players.length; i++) {
+        const isImpostor = gameState.impostors.includes(i);
+        probabilities.push({
+            index: i,
+            weight: isImpostor ? 0.5 : 1.0
+        });
+    }
+    
+    // Calcular el peso total
+    const totalWeight = probabilities.reduce((sum, p) => sum + p.weight, 0);
+    
+    // Seleccionar aleatoriamente basado en pesos
+    let random = Math.random() * totalWeight;
+    
+    for (const prob of probabilities) {
+        random -= prob.weight;
+        if (random <= 0) {
+            gameState.firstPlayer = gameState.players[prob.index].name;
+            break;
+        }
+    }
 }
 
 function updateRevealScreen() {
@@ -391,7 +422,13 @@ function nextPlayer() {
 }
 
 function showGameResults() {
-    // Simplemente mostrar la pantalla final sin popup
+    // Mostrar quién empieza en la pantalla final
+    const firstPlayerNameElement = document.getElementById('first-player-name');
+    if (firstPlayerNameElement && gameState.firstPlayer) {
+        firstPlayerNameElement.textContent = gameState.firstPlayer;
+    }
+    
+    // Mostrar la pantalla final
     switchScreen(finalScreen);
 }
 
