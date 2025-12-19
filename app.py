@@ -15,7 +15,8 @@ def get_game_state():
             'current_player_index': 0,
             'revealed_players': [],
             'theme': 'general',
-            'impostor_count': 1
+            'impostor_count': 1,
+            'first_player': None
         }
     return session['game_state']
 
@@ -96,11 +97,23 @@ word_themes = {
         "Nintendo", "Tesla", "Samsung", "Apple", "Microsoft"
     ],
     'league of legends': [
-        "Yasuo", "Zed", "Ahri", "Lux", "Jinx",
-        "Ezreal", "Lee Sin", "Thresh", "Vayne", "Riven",
-        "Katarina", "Darius", "Garen", "Teemo", "Master Yi",
-        "Blitzcrank", "Jhin", "Draven", "Lucian", "Caitlyn",
-        "Morgana", "Kayn", "Yone", "Akali", "Ekko"
+        "Aatrox", "Ahri", "Akali", "Akshan", "Alistar", "Amumu", "Anivia", "Annie", "Aphelios", "Ashe",
+        "Aurelion Sol", "Azir", "Bardo", "Bel'Veth", "Blitzcrank", "Brand", "Braum", "Caitlyn", "Camille", "Cassiopeia",
+        "Cho'Gath", "Corki", "Darius", "Diana", "Dr. Mundo", "Draven", "Ekko", "Elise", "Evelynn", "Ezreal",
+        "Fiddlesticks", "Fiora", "Fizz", "Galio", "Gangplank", "Garen", "Gnar", "Gragas", "Graves", "Gwen",
+        "Hecarim", "Heimerdinger", "Illaoi", "Irelia", "Ivern", "Janna", "Jarvan IV", "Jax", "Jayce", "Jhin",
+        "Jinx", "K'Sante", "Kai'Sa", "Kalista", "Karma", "Karthus", "Kassadin", "Katarina", "Kayle", "Kayn",
+        "Kennen", "Kha'Zix", "Kindred", "Kled", "Kog'Maw", "LeBlanc", "Lee Sin", "Leona", "Lillia", "Lissandra",
+        "Lucian", "Lulu", "Lux", "Malphite", "Malzahar", "Maokai", "Master Yi", "Milio", "Miss Fortune", "Mordekaiser",
+        "Morgana", "Naafiri", "Nami", "Nasus", "Nautilus", "Neeko", "Nidalee", "Nilah", "Nocturne", "Nunu y Willump",
+        "Olaf", "Orianna", "Ornn", "Pantheon", "Poppy", "Pyke", "Qiyana", "Quinn", "Rakan", "Rammus",
+        "Rek'Sai", "Rell", "Renata Glasc", "Renekton", "Rengar", "Riven", "Rumble", "Ryze", "Samira", "Sejuani",
+        "Senna", "Seraphine", "Sett", "Shaco", "Shen", "Shyvana", "Singed", "Sion", "Sivir", "Skarner",
+        "Sona", "Soraka", "Swain", "Sylas", "Syndra", "Tahm Kench", "Taliyah", "Talon", "Taric", "Teemo",
+        "Thresh", "Tristana", "Trundle", "Tryndamere", "Twisted Fate", "Twitch", "Udyr", "Urgot", "Varus", "Vayne",
+        "Veigar", "Vel'Koz", "Vex", "Vi", "Viego", "Viktor", "Vladimir", "Volibear", "Warwick", "Wukong",
+        "Xayah", "Xerath", "Xin Zhao", "Yasuo", "Yone", "Yorick", "Yuumi", "Zac", "Zed", "Zeri",
+        "Ziggs", "Zilean", "Zoe", "Zyra"
     ],
     'clash royale': [
         "Caballero", "Arqueras", "Gigante", "PEKKA", "Globo",
@@ -182,6 +195,15 @@ def start_game():
     # Seleccionar impostores aleatorios
     game_state['impostors'] = random.sample(game_state['players'], impostor_count)
     
+    # Seleccionar primer jugador con probabilidad ponderada
+    # Impostores tienen 50% de probabilidad que jugadores normales
+    weighted_players = []
+    for player in game_state['players']:
+        weight = 0.5 if player in game_state['impostors'] else 1.0
+        weighted_players.extend([player] * int(weight * 10))  # Multiplicar por 10 para trabajar con enteros
+    
+    game_state['first_player'] = random.choice(weighted_players) if weighted_players else game_state['players'][0]
+    
     # Si es una temática personalizada con palabras
     if custom_words and isinstance(custom_words, list) and len(custom_words) >= 10:
         game_state['theme'] = theme
@@ -244,7 +266,8 @@ def get_impostor():
     return jsonify({
         'impostors': game_state['impostors'],
         'secret_word': game_state['secret_word'],
-        'impostor_count': len(game_state['impostors'])
+        'impostor_count': len(game_state['impostors']),
+        'first_player': game_state.get('first_player', None)
     })
 
 @app.route('/api/game/reset', methods=['POST'])
@@ -255,6 +278,7 @@ def reset_game():
     game_state['current_player_index'] = 0
     game_state['revealed_players'] = []
     game_state['impostor_count'] = 1
+    game_state['first_player'] = None
     
     save_game_state(game_state)
     

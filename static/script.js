@@ -660,6 +660,28 @@ async function nextPlayer() {
     gameState.currentPlayerIndex++;
     
     if (gameState.currentPlayerIndex >= gameState.players.length) {
+        // Obtener información del juego incluyendo el primer jugador
+        try {
+            const response = await fetch('/api/game/impostor');
+            if (response.ok) {
+                const data = await response.json();
+                
+                // Mostrar el primer jugador en la pantalla final
+                const firstPlayerContainer = document.getElementById('first-player-container');
+                const firstPlayerName = document.getElementById('first-player-name');
+                if (data.first_player && firstPlayerName) {
+                    firstPlayerName.textContent = data.first_player.toUpperCase();
+                    if (firstPlayerContainer) {
+                        firstPlayerContainer.style.display = 'block';
+                    }
+                } else if (firstPlayerContainer) {
+                    firstPlayerContainer.style.display = 'none';
+                }
+            }
+        } catch (error) {
+            console.error('Error al obtener primer jugador:', error);
+        }
+        
         showScreen('final-screen');
     } else {
         showScreen('reveal-screen');
@@ -688,6 +710,19 @@ async function revealImpostor() {
         }
         
         console.log('Impostores:', data.impostors);
+        console.log('Primer jugador:', data.first_player);
+        
+        // Mostrar el primer jugador
+        const firstPlayerContainer = document.getElementById('first-player-container');
+        const firstPlayerName = document.getElementById('first-player-name');
+        if (data.first_player && firstPlayerName) {
+            firstPlayerName.textContent = data.first_player.toUpperCase();
+            if (firstPlayerContainer) {
+                firstPlayerContainer.style.display = 'block';
+            }
+        } else if (firstPlayerContainer) {
+            firstPlayerContainer.style.display = 'none';
+        }
         
         // Configurar el texto según cantidad de impostores
         const impostorLabel = document.querySelector('.impostor-label');
