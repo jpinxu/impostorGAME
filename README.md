@@ -1,17 +1,26 @@
-# Impostor Game v1.0
+# Impostor Game v1.1
 
 Juego de rol social donde uno o más impostores deben pasar desapercibidos mientras los demás jugadores conocen la palabra secreta.
 
 ## Características
 
 - 12 temáticas predefinidas
+  - **League of Legends** con 160+ campeones completos
+  - **Clash Royale** y otras temáticas populares
 - Sistema de temáticas personalizadas (mínimo 10 palabras)
 - Selección aleatoria de temática
+- **Selección automática del primer jugador** (los impostores tienen 50% menos probabilidad)
 - Captura de fotos de jugadores vía webcam
 - Múltiples impostores configurables (1 a N-2)
 - Interfaz moderna con animaciones CSS
 - Diseño responsive
 - Persistencia local de datos
+
+## Novedades v1.1
+
+- ✨ **League of Legends expandido**: Ahora incluye todos los campeones (160+)
+- 🎮 **Primer jugador automático**: El juego selecciona quién da la primera pista con probabilidad ponderada (impostores tienen menos chance)
+- 🎨 Mejoras visuales en la pantalla final
 
 ## Versiones Disponibles
 
@@ -132,13 +141,14 @@ Tu aplicación estará disponible en una URL pública.
 
 ## Cómo Jugar
 
-1. Selecciona una temática
+1. Selecciona una temática (12 disponibles, incluyendo League of Legends con 160+ campeones)
 2. Ingresa nombres de jugadores (mínimo 3)
-3. Configura cantidad de impostores
+3. Configura cantidad de impostores (hasta N-2)
 4. Cada jugador revela su rol en privado
 5. Jugadores normales ven la palabra, impostores no
-6. Discutan y voten quién es el impostor
-7. Revelen al impostor
+6. El juego selecciona automáticamente quién empieza dando la primera pista
+7. Discutan y voten quién es el impostor
+8. Revelen al impostor
 
 ## Stack Tecnológico
 

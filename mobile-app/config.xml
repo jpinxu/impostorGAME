@@ -1,7 +1,8 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.imposwho.app" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
+<widget id="com.imposwho.app" version="1.1.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
     <name>imposWHO</name>
-    <description>Juego de rol social - Encuentra al impostor</description>
+    <description>Juego de rol social - Encuentra al impostor (v1.1: League of Legends completo + Primer jugador)</description>
+</invoke>
     <author email="dev@imposwho.com" href="https://github.com/jpinxu/imposWHO">
         imposWHO Team
     </author>
