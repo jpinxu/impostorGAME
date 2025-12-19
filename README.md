@@ -18,21 +18,81 @@ Juego de rol social donde uno o más impostores deben pasar desapercibidos mient
 
 ## Novedades v1.1
 
-- ✨ **League of Legends expandido**: Ahora incluye todos los campeones (160+)
-- 🎮 **Primer jugador automático**: El juego selecciona quién da la primera pista con probabilidad ponderada (impostores tienen menos chance)
-- 🎨 Mejoras visuales en la pantalla final
+- **League of Legends expandido**: Ahora incluye todos los campeones (160+)
+- **Primer jugador automático**: El juego selecciona quién da la primera pista con probabilidad ponderada (impostores tienen menos chance)
+- Mejoras visuales en la pantalla final
 
 ## Versiones Disponibles
 
-Este proyecto tiene tres formas de uso:
+Este proyecto tiene cuatro formas de uso:
 
-1. **EXE Portable** - Ejecutable para compartir (no requiere instalación)
-2. **Web Desplegable** - Para hospedar en servicios como Render
-3. **Desarrollo Local** - Para ejecutar localmente con Python
+1. **APK Android** - Aplicación nativa para dispositivos Android (imposWHO)
+2. **EXE Portable** - Ejecutable para compartir (no requiere instalación)
+3. **Web Desplegable** - Para hospedar en servicios como Render
+4. **Desarrollo Local** - Para ejecutar localmente con Python
 
 ---
 
-## 1. EXE Portable (Windows)
+## 1. APK Android (imposWHO)
+
+### Para Usuarios Finales
+
+**Aplicación Android nativa, funciona offline sin servidor.**
+
+#### Instalación
+
+1. Descarga `imposWHO.apk` desde la sección Releases
+2. Habilita "Instalar apps de fuentes desconocidas" en Android
+3. Abre el archivo APK y acepta la instalación
+4. Listo para jugar offline
+
+#### Características
+
+- Aplicación standalone (sin necesidad de servidor)
+- 12 temáticas integradas con 160+ campeones de LoL
+- Selección automática del primer jugador
+- Tamaño: ~3.3 MB
+- Compatible con Android 7.0+ (API 24+)
+- Optimizado para dispositivos móviles
+
+### Para Desarrolladores
+
+#### Requisitos
+
+- Node.js 18+
+- Java JDK 11 o superior
+- Android SDK (API 35)
+- Gradle 8.5+
+- Cordova CLI
+
+#### Construir APK
+
+```powershell
+# Opción 1: Script automatizado (recomendado)
+.\build-apk.ps1
+
+# Opción 2: Manual
+cd mobile-app
+cordova build android --release
+```
+
+El APK se genera en:
+- Debug: `mobile-app/platforms/android/app/build/outputs/apk/debug/app-debug.apk`
+- Release: `mobile-app/platforms/android/app/build/outputs/apk/release/app-release.apk`
+- Copia final: `dist-android/imposWHO.apk`
+
+#### Archivos del proyecto Android
+
+- `mobile-app/www/` - Código web standalone (HTML/CSS/JS)
+- `mobile-app/config.xml` - Configuración de Cordova
+- `mobile-app/res/icon/` - Íconos de la app
+- `build-apk.ps1` - Script de compilación automatizado
+
+> **Nota:** La versión APK usa `mobile-app/www/script.js` que es standalone y NO depende del backend Flask.
+
+---
+
+## 2. EXE Portable (Windows)
 
 ### Para Usuarios Finales
 
@@ -76,7 +136,7 @@ El ejecutable se genera en `dist/ImpostorGameWeb.exe`
 
 ---
 
-## 2. Desarrollo Local
+## 3. Desarrollo Local
 
 ### Requisitos
 
@@ -114,7 +174,7 @@ Abrir en navegador: `http://localhost:5000`
 
 ---
 
-## 3. Despliegue Web (Render)
+## 4. Despliegue Web (Render)
 
 ### Configuración
 
